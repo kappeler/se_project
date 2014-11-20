@@ -19,17 +19,6 @@ public class ExampleServiceClientImpl implements ExampleServiceClientInt{
 		this.maingui= new MainGUI(this);
 	}
 
-	@Override
-	public void sayHello(String name) {
-		this.service.sayHello(name,new DefaultCallback());
-		
-	}
-
-	@Override
-	public void addTwoNumbers(int num1, int num2) {
-		this.service.addTwoNumbers(num1, num2, new DefaultCallback());
-		
-	}
 	
 	public MainGUI getMainGUI(){
 		return this.maingui;
@@ -53,15 +42,8 @@ public class ExampleServiceClientImpl implements ExampleServiceClientInt{
 
 		@Override
 		public void onSuccess(Object result) {
-			if(result instanceof String){
-				String greeting= (String) result;
-				
-			}
-			else if (result instanceof Integer){
-				int sum= (Integer) result;
-				maingui.updateSumLabel(sum);
-			}
-			else if(result instanceof String[][]){
+	
+			if(result instanceof String[][]){
 				String[][] output=  (String[][]) result;
 				maingui.displayTable(output);
 			}

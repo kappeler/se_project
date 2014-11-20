@@ -8,8 +8,11 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.visualization.client.VisualizationUtils;
+import com.google.gwt.visualization.client.visualizations.corechart.PieChart;
 
 import edu.example.client.service.ExampleServiceClientImpl;
 
@@ -21,11 +24,6 @@ public class MainGUI extends Composite {
 	private SortedList slist;
 	private MyPieChart pie;
 	
-	private Label resultLbl;
-	private Label sumLbl;
-	
-	private TextBox txtNum1;
-	private TextBox txtNum2;
 	
 	private HTML html;
 	
@@ -51,24 +49,6 @@ public class MainGUI extends Composite {
 		btnh1.addClickHandler(new Btnh1ClickHandler());
 		btnh2.addClickHandler(new Btnh2ClickHandler());
 	
-		
-		this.resultLbl = new Label("Result will be here");
-	//	this.vPanel.add(resultLbl);
-	
-		this.txtNum1 = new TextBox();
-		
-	//	this.vPanel.add(txtNum1);
-		
-		this.txtNum2 = new TextBox();
-		
-	//	this.vPanel.add(txtNum2);
-		
-		Button btn2 = new Button("Add two numbers");
-		btn2.addClickHandler(new Btn2ClickHandler());
-	//	this.vPanel.add(btn2);
-		
-		this.sumLbl= new Label("Sum will be here");
-	//	this.vPanel.add(sumLbl);
 		
 		this.vPanel.add(hPanel);
 		
@@ -104,26 +84,17 @@ public class MainGUI extends Composite {
 			if(vPanel1.getWidgetCount() > 1){
 				vPanel1.remove(1);
 			}
-			
-			vPanel1.add(pie.getPieChart());
-		}
-	}
-	
-	public void updateSumLabel(int sum){
-		this.sumLbl.setText(""+sum);
-	}
-	private class Btn2ClickHandler implements ClickHandler{
-
-		@Override
-		public void onClick(ClickEvent event) {
-			int num1= Integer.valueOf(txtNum1.getText());
-			int num2= Integer.valueOf(txtNum2.getText());
-			
-			serviceImpl.addTwoNumbers(num1, num2);
-			
-		}
+			Runnable onLoadCallback = new Runnable() {
+				public void run() {
+					vPanel1.add(pie.getPieChart());
+			}
+			};
+			VisualizationUtils.loadVisualizationApi(onLoadCallback, PieChart.PACKAGE);
+		
 		
 	}
+	}
+
 	private class Btn3ClickHandler implements ClickHandler{
 
 		@Override

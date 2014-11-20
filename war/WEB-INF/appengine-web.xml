@@ -28,4 +28,6 @@
     http://code.google.com/appengine/docs/java/config/appconfig.html#Enabling_Sessions
   -->
 	<use-google-connector-j>true</use-google-connector-j>
+	
+tion'/>
 </appengine-web-app>

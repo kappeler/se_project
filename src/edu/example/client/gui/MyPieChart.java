@@ -7,8 +7,8 @@ import com.google.gwt.visualization.client.AbstractDataTable.ColumnType;
 import com.google.gwt.visualization.client.DataTable;
 import com.google.gwt.visualization.client.Selection;
 import com.google.gwt.visualization.client.events.SelectHandler;
-import com.google.gwt.visualization.client.visualizations.PieChart;
-import com.google.gwt.visualization.client.visualizations.PieChart.Options;
+import com.google.gwt.visualization.client.visualizations.corechart.PieChart;
+import com.google.gwt.visualization.client.visualizations.corechart.Options;
 
 public class MyPieChart {
 
@@ -17,6 +17,7 @@ public class MyPieChart {
 		PieChart pie = new PieChart(createTable(), createOptions());
 
 		//pie.addSelectHandler(createSelectHandler(pie));		
+		
 		return pie;
 	}
 
@@ -83,7 +84,7 @@ public class MyPieChart {
 		Options options = Options.create();
 		options.setWidth(800);
 		options.setHeight(480);
-		options.set3D(true);
+		//options.set3D(true);
 		options.setTitle("Import");
 		return options;
 	}
