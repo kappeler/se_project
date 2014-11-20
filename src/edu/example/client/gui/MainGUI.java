@@ -19,6 +19,7 @@ public class MainGUI extends Composite {
 	private VerticalPanel vPanel1;
 	
 	private SortedList slist;
+	private MyPieChart pie;
 	
 	private Label resultLbl;
 	private Label sumLbl;
@@ -34,9 +35,7 @@ public class MainGUI extends Composite {
 		initWidget(this.vPanel);
 		this.serviceImpl=serviceImpl;
 		
-	
-		slist = new SortedList();
-		this.vPanel.add(slist.getSortedList());
+
 
 		vPanel1 = new VerticalPanel();
 		
@@ -50,6 +49,7 @@ public class MainGUI extends Composite {
 		this.hPanel.add(btnh3);
 		
 		btnh1.addClickHandler(new Btnh1ClickHandler());
+		btnh2.addClickHandler(new Btnh2ClickHandler());
 	
 		
 		this.resultLbl = new Label("Result will be here");
@@ -74,7 +74,7 @@ public class MainGUI extends Composite {
 		
 		Button btn3 = new Button("Show Table");
 		btn3.addClickHandler(new Btn3ClickHandler());
-		this.vPanel.add(btn3);
+	//	this.vPanel.add(btn3);
 		
 		
 	}
@@ -87,12 +87,26 @@ public class MainGUI extends Composite {
 		public void onClick(ClickEvent event) {
 			
 			slist = new SortedList();
+			if(vPanel1.getWidgetCount() > 1){
+				vPanel1.remove(1);
+			}
+			
 			vPanel1.add(slist.getSortedList());
-		
-			
-			
 		}
+	}
+	
+	private class Btnh2ClickHandler implements ClickHandler{
 		
+		@Override
+		public void onClick(ClickEvent event) {
+			
+			pie = new MyPieChart();
+			if(vPanel1.getWidgetCount() > 1){
+				vPanel1.remove(1);
+			}
+			
+			vPanel1.add(pie.getPieChart());
+		}
 	}
 	
 	public void updateSumLabel(int sum){
