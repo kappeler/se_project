@@ -1,6 +1,9 @@
 package edu.example.client.service;
 
+import java.util.List;
+
 import com.google.gwt.core.shared.GWT;
+import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
 
@@ -27,10 +30,7 @@ public class ExampleServiceClientImpl implements ExampleServiceClientInt{
 	@Override
 	public void getData() {
 		this.service.getData(new DefaultCallback());
-		
 	}
-	
-
 	
 	private class DefaultCallback implements AsyncCallback{
 
@@ -45,10 +45,9 @@ public class ExampleServiceClientImpl implements ExampleServiceClientInt{
 	
 			if(result instanceof String[][]){
 				String[][] output=  (String[][]) result;
-				maingui.displayTable(output);
+				//maingui.displayTable(output);
+				maingui.displaySmartTable(output);
 			}
-	
-			
 		}
 		
 	}
