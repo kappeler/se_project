@@ -2,16 +2,13 @@ package edu.example.client.gui;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.RootPanel;
-import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.visualization.client.VisualizationUtils;
 import com.google.gwt.visualization.client.visualizations.corechart.PieChart;
 
@@ -50,15 +47,11 @@ public class MainGUI extends Composite {
 		
 		btnh1.addClickHandler(new Btnh1ClickHandler());
 		btnh2.addClickHandler(new Btnh2ClickHandler());
-	
-		
-		this.vPanel.add(hPanel);
 		
 		Button btn3 = new Button("Show Table");
 		btn3.addClickHandler(new Btn3ClickHandler());
-	//	this.vPanel.add(btn3);
-		
-		
+		this.hPanel.add(btn3);
+		this.vPanel.add(hPanel);
 	}
 	
 
@@ -69,11 +62,7 @@ public class MainGUI extends Composite {
 		public void onClick(ClickEvent event) {
 			
 			slist = new SortedList();
-			if(vPanel.getWidgetCount() > 1){
-				vPanel.remove(1);
-			}
-			
-			vPanel.add(slist.getSortedList());
+			addWidget(slist.getSortedList());
 		}
 	}
 	
@@ -95,6 +84,13 @@ public class MainGUI extends Composite {
 		
 		
 	}
+	}
+	
+	private void addWidget(Widget widget){
+		if(vPanel.getWidgetCount() > 1){
+			vPanel.remove(1);
+		}
+		vPanel.add(widget);
 	}
 
 	private class Btn3ClickHandler implements ClickHandler{

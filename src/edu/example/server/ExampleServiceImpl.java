@@ -10,14 +10,7 @@ public class ExampleServiceImpl extends RemoteServiceServlet implements ExampleS
 	@Override
 	public String[][] getData() {
 		DBConnect connect = new DBConnect();
-		return connect.getTable();
-		
+		String sql = "select * from data limit 4";
+		return connect.getTable(connect.getResultSet(sql));
 	}
-
-
-
-		
-	
-	
-
 }
