@@ -1,0 +1,2 @@
+serviceClass: edu.example.client.service.ExampleService
+path: 6B8F3C761246D7ACF5D50F5694B707C3.gwt.rpc
