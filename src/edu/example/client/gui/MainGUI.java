@@ -16,6 +16,7 @@ import edu.example.client.service.ExampleServiceClientImpl;
 public class MainGUI extends Composite {
 	private VerticalPanel vPanel = new VerticalPanel();
 	private HorizontalPanel hPanel = new HorizontalPanel();
+	private VerticalPanel vPanel1;
 	
 	private SortedList slist;
 	
@@ -37,10 +38,19 @@ public class MainGUI extends Composite {
 		slist = new SortedList();
 		this.vPanel.add(slist.getSortedList());
 
+		vPanel1 = new VerticalPanel();
 		
-		Button btn1 = new Button ("SortedList");
-		btn1.addClickHandler(new Btn1ClickHandler());
-	//	this.vPanel.add(btn1);
+		Button btnh1 = new Button ("SortedList");
+		Button btnh2 = new Button ("Pie");
+		Button btnh3 = new Button ("Map");
+		
+		vPanel1.add(btnh1);
+		this.hPanel.add(vPanel1);
+		this.hPanel.add(btnh2);
+		this.hPanel.add(btnh3);
+		
+		btnh1.addClickHandler(new Btnh1ClickHandler());
+	
 		
 		this.resultLbl = new Label("Result will be here");
 	//	this.vPanel.add(resultLbl);
@@ -60,7 +70,7 @@ public class MainGUI extends Composite {
 		this.sumLbl= new Label("Sum will be here");
 	//	this.vPanel.add(sumLbl);
 		
-		
+		this.vPanel.add(hPanel);
 		
 		Button btn3 = new Button("Show Table");
 		btn3.addClickHandler(new Btn3ClickHandler());
@@ -71,10 +81,14 @@ public class MainGUI extends Composite {
 	
 
 	
-	private class Btn1ClickHandler implements ClickHandler{
-
+	private class Btnh1ClickHandler implements ClickHandler{
+		
 		@Override
 		public void onClick(ClickEvent event) {
+			
+			slist = new SortedList();
+			vPanel1.add(slist.getSortedList());
+		
 			
 			
 		}
