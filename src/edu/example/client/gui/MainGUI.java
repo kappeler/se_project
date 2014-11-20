@@ -6,6 +6,7 @@ import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
@@ -32,6 +33,7 @@ public class MainGUI extends Composite {
 	public MainGUI (ExampleServiceClientImpl serviceImpl){
 		initWidget(this.vPanel);
 		this.serviceImpl=serviceImpl;
+		vPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 		
 
 
@@ -67,11 +69,11 @@ public class MainGUI extends Composite {
 		public void onClick(ClickEvent event) {
 			
 			slist = new SortedList();
-			if(vPanel1.getWidgetCount() > 1){
-				vPanel1.remove(1);
+			if(vPanel.getWidgetCount() > 1){
+				vPanel.remove(1);
 			}
 			
-			vPanel1.add(slist.getSortedList());
+			vPanel.add(slist.getSortedList());
 		}
 	}
 	
@@ -81,12 +83,12 @@ public class MainGUI extends Composite {
 		public void onClick(ClickEvent event) {
 			
 			pie = new MyPieChart();
-			if(vPanel1.getWidgetCount() > 1){
-				vPanel1.remove(1);
+			if(vPanel.getWidgetCount() > 1){
+				vPanel.remove(1);
 			}
 			Runnable onLoadCallback = new Runnable() {
 				public void run() {
-					vPanel1.add(pie.getPieChart());
+					vPanel.add(pie.getPieChart());
 			}
 			};
 			VisualizationUtils.loadVisualizationApi(onLoadCallback, PieChart.PACKAGE);
