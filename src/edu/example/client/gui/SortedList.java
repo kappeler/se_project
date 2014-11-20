@@ -13,13 +13,19 @@ import com.google.gwt.view.client.ListDataProvider;
 public class SortedList {
 	
 	// CLass Contact
-	  private static class Contact {
+	   public static class Contact {
 		    private final String value;
 		    private final String country;
 		    
 		    public Contact(String country, String value) {
 		      this.country = country;
 		      this.value = value;
+		    }
+		    public String getCountry(){
+		    	return country;
+		    }
+		    public String getValue(){
+		    	return value;
 		    }
 		  }
 	  
