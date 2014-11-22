@@ -27,11 +27,15 @@ import com.google.gwt.visualization.client.visualizations.corechart.PieChart;
 
 import edu.example.client.service.ExampleServiceClientImpl;
 
+//############################
+//##	PENIS				##
+//############################
+
 public class MainGUI extends Composite {
 	private VerticalPanel vPanel = new VerticalPanel();
 	private HorizontalPanel hPanel = new HorizontalPanel();
 	private VerticalPanel vPanel1;
-	public CellTable<List<String>> table;
+	//public CellTable<List<String>> table;
 	private String [][] data;
 	
 
@@ -130,11 +134,11 @@ public class MainGUI extends Composite {
 		public void onClick(ClickEvent event) {
 			int index = lb.getSelectedIndex();
 			
-			table= new CellTable<List<String>>();
+			//table= new CellTable<List<String>>();
 
 			serviceImpl.getData("select *from data limit "+lb.getItemText(index));
 			displaySmartTable(data);
-			addWidget(table);
+			
 			
 		}
 	}
@@ -155,7 +159,7 @@ public class MainGUI extends Composite {
 	public void displaySmartTable(String[][] stringArray) {
 	
 		// Create a CellTable.
-		//table= new CellTable<List<String>>();
+		CellTable<List<String>> table= new CellTable<List<String>>();
 
 		// Get the rows as List
 		int nrows = stringArray.length;
@@ -186,7 +190,7 @@ public class MainGUI extends Composite {
 		// Add the table to the dataProvider.
 		dataProvider.addDataDisplay(table);
 
-		//addWidget(table);
+		addWidget(table);
 		
 	}
 
@@ -220,28 +224,6 @@ public class MainGUI extends Composite {
 			return object.get(this.index);
 		}
 	}
-	public void displayTable(String[][] output) {
 
-		html = new HTML();
-		String code="<table border= '1'><tr>";
-		
-		for(int y= 0; y <output[0].length ; y++){
-			code= code+ "<th>"+output[0][y]+"</th>";
-		}
-		code=code+"</tr>";
-		for(int i=1; i< output.length; i++){
-			code= code+"<tr>";
-			for(int y= 0; y<output[i].length; y++){
-				code= code+ "<td>"+output[i][y]+"</td>";
-			}
-			code=code+"</tr>";
-			
-		}
-		
-		code= code+"</table>";
-		
-		html.setHTML(code);
-		this.vPanel.add(html);
-	}
 
 }
