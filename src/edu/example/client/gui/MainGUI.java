@@ -10,29 +10,34 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
-import com.google.gwt.user.cellview.client.TextHeader;
 import com.google.gwt.user.cellview.client.ColumnSortEvent.ListHandler;
+import com.google.gwt.user.cellview.client.TextHeader;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.visualization.client.VisualizationUtils;
 import com.google.gwt.visualization.client.visualizations.corechart.PieChart;
 
-import edu.example.client.gui.SortedList.Contact;
 import edu.example.client.service.ExampleServiceClientImpl;
 
 public class MainGUI extends Composite {
 	private VerticalPanel vPanel = new VerticalPanel();
 	private HorizontalPanel hPanel = new HorizontalPanel();
 	private VerticalPanel vPanel1;
+	public CellTable<List<String>> table;
+	private String [][] data;
+	
 
 	private SortedList slist;
 	private MyPieChart pie;
+	private ListBox lb;
 	
 	private HTML html;
 
@@ -42,28 +47,41 @@ public class MainGUI extends Composite {
 		initWidget(this.vPanel);
 		this.serviceImpl = serviceImpl;
 		vPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+		hPanel.setSpacing(10);
 
-		vPanel1 = new VerticalPanel();
-
-		Button btnh1 = new Button("SortedList");
-		Button btnh2 = new Button("Pie");
-		//Button btnh3 = new Button("Map");
+		HorizontalPanel hPanel1 = new HorizontalPanel();
+		hPanel1.setBorderWidth(1);
+		hPanel1.add(getListBox(true));
+		
 		Button btn3 = new Button("Show Table");
+		hPanel1.add(btn3);
 		
+		this.hPanel.add(hPanel1);
 		
-		vPanel1.add(btnh1);
-		this.hPanel.add(vPanel1);
+		Button btnh2 = new Button("Pie");
 		this.hPanel.add(btnh2);
-		this.hPanel.add(btn3);
-		//this.hPanel.add(btnh3);
 
-		btnh1.addClickHandler(new Btnh1ClickHandler());
+		
+
+	
 		btnh2.addClickHandler(new Btnh2ClickHandler());
 		btn3.addClickHandler(new Btn3ClickHandler());
 		
 		this.vPanel.add(hPanel);
 	}
-
+	
+	//ListBox to define how many rows from the table will be shown
+	ListBox getListBox(boolean dropdown)
+	{
+	    lb = new ListBox();
+	    lb.addStyleName("demo-ListBox");
+	    lb.addItem("3");
+	    lb.addItem("5");
+	    lb.addItem("10");
+	    lb.addItem("15");
+	    if(!dropdown)lb.setVisibleItemCount(3);
+	    return lb;
+	}
 	private class Btnh1ClickHandler implements ClickHandler {
 
 		@Override
@@ -78,14 +96,18 @@ public class MainGUI extends Composite {
 
 		@Override
 		public void onClick(ClickEvent event) {
-
+			
 			pie = new MyPieChart();
 			if (vPanel.getWidgetCount() > 1) {
 				vPanel.remove(1);
 			}
 			Runnable onLoadCallback = new Runnable() {
 				public void run() {
-					vPanel.add(pie.getPieChart());
+					
+					String sql = "select area_name, value from data where year='1992' and flagd='Official data' limit 10";
+					serviceImpl.getData(sql);
+					
+					vPanel.add(pie.getPieChart(data));
 				}
 			};
 			VisualizationUtils.loadVisualizationApi(onLoadCallback,
@@ -102,44 +124,38 @@ public class MainGUI extends Composite {
 	}
 
 	private class Btn3ClickHandler implements ClickHandler {
+		
+
 		@Override
 		public void onClick(ClickEvent event) {
+			int index = lb.getSelectedIndex();
+			
+			table= new CellTable<List<String>>();
 
-			serviceImpl.getData();
+			serviceImpl.getData("select *from data limit "+lb.getItemText(index));
+			displaySmartTable(data);
+			addWidget(table);
+			
 		}
 	}
-	
-	
-	
-	public void displayTable(String[][] output) {
-
-		html = new HTML();
-		String code = "<table border= '1'><tr>";
-
-		for (int y = 0; y < output[0].length; y++) {
-			code = code + "<th>" + output[0][y] + "</th>";
-		}
-		code = code + "</tr>";
-		for (int i = 1; i < output.length; i++) {
-			code = code + "<tr>";
-			for (int y = 0; y < output[i].length; y++) {
-				code = code + "<td>" + output[i][y] + "</td>";
+	public void copy(String[][] input){
+		data= new String[input.length][input[0].length];
+		for(int i=0; i< input.length; i++){
+			for(int j=0; j<input[i].length; j++){
+				data[i][j]=input[i][j];
 			}
-			code = code + "</tr>";
-
 		}
-
-		code = code + "</table>";
-
-		html.setHTML(code);
-		this.vPanel.add(html);
-	}
-	
-	
-	public void displaySmartTable(String[][] stringArray) {
 		
+	}
+
+	
+	//**********************************************************************************
+	//**                                  CELL TABLE								  **
+	//**********************************************************************************
+	public void displaySmartTable(String[][] stringArray) {
+	
 		// Create a CellTable.
-		CellTable<List<String>> table = new CellTable<List<String>>();
+		//table= new CellTable<List<String>>();
 
 		// Get the rows as List
 		int nrows = stringArray.length;
@@ -170,7 +186,8 @@ public class MainGUI extends Composite {
 		// Add the table to the dataProvider.
 		dataProvider.addDataDisplay(table);
 
-		addWidget(table);
+		//addWidget(table);
+		
 	}
 
 	
@@ -202,6 +219,29 @@ public class MainGUI extends Composite {
 		public String getValue(List<String> object) {
 			return object.get(this.index);
 		}
+	}
+	public void displayTable(String[][] output) {
+
+		html = new HTML();
+		String code="<table border= '1'><tr>";
+		
+		for(int y= 0; y <output[0].length ; y++){
+			code= code+ "<th>"+output[0][y]+"</th>";
+		}
+		code=code+"</tr>";
+		for(int i=1; i< output.length; i++){
+			code= code+"<tr>";
+			for(int y= 0; y<output[i].length; y++){
+				code= code+ "<td>"+output[i][y]+"</td>";
+			}
+			code=code+"</tr>";
+			
+		}
+		
+		code= code+"</table>";
+		
+		html.setHTML(code);
+		this.vPanel.add(html);
 	}
 
 }

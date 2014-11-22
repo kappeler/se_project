@@ -3,5 +3,5 @@ package edu.example.client.service;
 
 public interface ExampleServiceClientInt {
 
-	void getData();
+	void getData(String sql);
 }

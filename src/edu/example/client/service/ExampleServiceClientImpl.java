@@ -8,6 +8,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
 
 import edu.example.client.gui.MainGUI;
+import edu.example.server.Data;
 
 public class ExampleServiceClientImpl implements ExampleServiceClientInt{
 	private ExampleServiceAsync service;
@@ -28,8 +29,8 @@ public class ExampleServiceClientImpl implements ExampleServiceClientInt{
 	}
 	
 	@Override
-	public void getData() {
-		this.service.getData(new DefaultCallback());
+	public void getData(String sql) {
+		this.service.getData(sql,new DefaultCallback());
 	}
 	
 	private class DefaultCallback implements AsyncCallback{
@@ -45,8 +46,10 @@ public class ExampleServiceClientImpl implements ExampleServiceClientInt{
 	
 			if(result instanceof String[][]){
 				String[][] output=  (String[][]) result;
-				//maingui.displayTable(output);
-				maingui.displaySmartTable(output);
+				//maingui.displaySmartTable(output);
+				maingui.copy(output);
+			
+				
 			}
 		}
 		

@@ -1,8 +1,5 @@
 package edu.example.server;
 
-import java.util.List;
-
-import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 import edu.example.client.service.ExampleService;
@@ -10,9 +7,9 @@ import edu.example.client.service.ExampleService;
 public class ExampleServiceImpl extends RemoteServiceServlet implements ExampleService{
 
 	@Override
-	public String[][] getData() {
+	public String[][] getData(String sql) {
 		DBConnect connect = new DBConnect();
-		String sql = "select * from data limit 4";
 		return connect.getTable(connect.getResultSet(sql));
+		
 	}
 }
