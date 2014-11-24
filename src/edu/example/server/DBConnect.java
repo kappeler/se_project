@@ -5,15 +5,8 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
-import com.google.gwt.cell.client.TextCell;
-import com.google.gwt.user.cellview.client.CellTable;
-import com.google.gwt.user.cellview.client.Column;
-import com.google.gwt.user.cellview.client.TextHeader;
-import com.google.gwt.view.client.ListDataProvider;
+import com.google.appengine.api.utils.SystemProperty;
 import com.mysql.jdbc.ResultSetMetaData;
 
 public class DBConnect {
@@ -25,12 +18,24 @@ public class DBConnect {
 
 	public DBConnect() {
 		try {
+			String url= null;
+			if (SystemProperty.environment.value() == SystemProperty.Environment.Value.Production) {
+					// Connecting from App Engine.
+					// Load the class that provides the "jdbc:google:mysql://"
+					// prefix.
+					Class.forName("com.mysql.jdbc.GoogleDriver");
+					
+					url ="jdbc:google:mysql://kama-13-765-482:seproject/se_project?user=root";
+					
+					con = DriverManager.getConnection(url);
+					//rs = con.createStatement().executeQuery("SELECT 1 + 1");
+					st= con.createStatement();
+					
+			}else{
 			Class.forName("com.mysql.jdbc.Driver");
-			con = DriverManager.getConnection(
-					"jdbc:mysql://173.194.244.133:3306/se_project", "root",
-					"1234");
+			con = DriverManager.getConnection("jdbc:mysql://173.194.251.250:3306/se_project", "root","1234");
 			st = con.createStatement();
-
+			}
 		} catch (Exception e) {
 			System.out.println("Error: " + e);
 		}

@@ -17,7 +17,6 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -108,10 +107,12 @@ public class MainGUI extends Composite {
 			Runnable onLoadCallback = new Runnable() {
 				public void run() {
 					
+					
 					String sql = "select area_name, value from data where year='1992' and flagd='Official data' limit 10";
 					serviceImpl.getData(sql);
 					
 					vPanel.add(pie.getPieChart(data));
+					
 				}
 			};
 			VisualizationUtils.loadVisualizationApi(onLoadCallback,
@@ -135,20 +136,16 @@ public class MainGUI extends Composite {
 			int index = lb.getSelectedIndex();
 			
 			//table= new CellTable<List<String>>();
-
+			
 			serviceImpl.getData("select *from data limit "+lb.getItemText(index));
 			displaySmartTable(data);
+			
 			
 			
 		}
 	}
 	public void copy(String[][] input){
-		data= new String[input.length][input[0].length];
-		for(int i=0; i< input.length; i++){
-			for(int j=0; j<input[i].length; j++){
-				data[i][j]=input[i][j];
-			}
-		}
+		data= input; 
 		
 	}
 

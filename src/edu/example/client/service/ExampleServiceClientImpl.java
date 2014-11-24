@@ -1,14 +1,10 @@
 package edu.example.client.service;
 
-import java.util.List;
-
 import com.google.gwt.core.shared.GWT;
-import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
 
 import edu.example.client.gui.MainGUI;
-import edu.example.server.Data;
 
 public class ExampleServiceClientImpl implements ExampleServiceClientInt{
 	private ExampleServiceAsync service;
@@ -54,8 +50,6 @@ public class ExampleServiceClientImpl implements ExampleServiceClientInt{
 		}
 		
 	}
-
-
 
 
 }
