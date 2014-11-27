@@ -15,9 +15,9 @@ import com.google.gwt.visualization.client.visualizations.corechart.Options;
 
 public class MyPieChart {
 
-	public PieChart getPieChart(String[][] table) {
+	public PieChart getPieChart(String[][] table, String pop) {
 	
-		PieChart pie = new PieChart(createTable(table), createOptions());
+		PieChart pie = new PieChart(createTable(table), createOptions(pop));
 
 				
 		
@@ -30,7 +30,7 @@ public class MyPieChart {
 		DataTable data = DataTable.create();
 		data.addColumn(ColumnType.STRING, "Land");
 		data.addColumn(ColumnType.NUMBER, "Pop");
-		System.out.println(table.length);
+		
 		data.addRows(table.length);
 		for (int i =1; i< table.length;i++){
 			for(int y= 0; y < table[i].length;y++){
@@ -52,12 +52,12 @@ public class MyPieChart {
 		return data;
 	}
 
-	private Options createOptions() {
+	private Options createOptions(String pop) {
 		Options options = Options.create();
 		options.setWidth(800);
 		options.setHeight(480);
 		//options.set3D(true);
-		options.setTitle("Pop in 1992");
+		options.setTitle("Population in "+pop);
 		return options;
 	}
 

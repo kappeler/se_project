@@ -17,6 +17,7 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -27,22 +28,22 @@ import com.google.gwt.visualization.client.visualizations.corechart.PieChart;
 import edu.example.client.service.ExampleServiceClientImpl;
 
 //############################
-//##	PENIS				##
+//##	PENIS	PENIS			##
 //############################
 
 public class MainGUI extends Composite {
 	private VerticalPanel vPanel = new VerticalPanel();
 	private HorizontalPanel hPanel = new HorizontalPanel();
-	private VerticalPanel vPanel1;
+	
 	//public CellTable<List<String>> table;
 	private String [][] data;
 	
 
-	private SortedList slist;
 	private MyPieChart pie;
 	private ListBox lb;
+	private ListBox lb2;
 	
-	private HTML html;
+
 
 	private ExampleServiceClientImpl serviceImpl;
 
@@ -50,19 +51,45 @@ public class MainGUI extends Composite {
 		initWidget(this.vPanel);
 		this.serviceImpl = serviceImpl;
 		vPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-		hPanel.setSpacing(10);
+		hPanel.setSpacing(50);
+		
+		
 
+		VerticalPanel vPanel1 = new VerticalPanel();
+		VerticalPanel vPanel2 = new VerticalPanel();
+		VerticalPanel vPanel3 = new VerticalPanel();
+		
 		HorizontalPanel hPanel1 = new HorizontalPanel();
+		HorizontalPanel hPanel2 = new HorizontalPanel();
+		HorizontalPanel hPanel3 = new HorizontalPanel();
+		
+		Label l1 = new Label("This option will show the whole Database Table");
+		vPanel1.add(l1);
+
 		hPanel1.setBorderWidth(1);
 		hPanel1.add(getListBox(true));
-		
 		Button btn3 = new Button("Show Table");
 		hPanel1.add(btn3);
 		
-		this.hPanel.add(hPanel1);
+		vPanel1.add(hPanel1);
 		
-		Button btnh2 = new Button("Pie");
-		this.hPanel.add(btnh2);
+		Label l2 = new Label("This option shows the Population from Countries in specific years  (only top 8)");
+		vPanel2.add(l2);
+		hPanel2.setBorderWidth(1);
+		hPanel2.add(getListBox2(true));
+		Button btnh2 = new Button("Show Pie");
+		hPanel2.add(btnh2);
+		
+		vPanel2.add(hPanel2);
+		
+		Label l3 = new Label("This option shows the Population from a Country between 1992 and 2011");
+	//	vPanel3.add(l3);
+	
+		
+	
+		this.hPanel.add(vPanel1);
+		this.hPanel.add(vPanel2);
+		this.hPanel.add(vPanel3);
 
 		
 
@@ -78,23 +105,43 @@ public class MainGUI extends Composite {
 	{
 	    lb = new ListBox();
 	    lb.addStyleName("demo-ListBox");
-	    lb.addItem("3");
 	    lb.addItem("5");
 	    lb.addItem("10");
-	    lb.addItem("15");
+	    lb.addItem("50");
+	    lb.addItem("100");
+	    lb.addItem("150");
 	    if(!dropdown)lb.setVisibleItemCount(3);
 	    return lb;
 	}
-	private class Btnh1ClickHandler implements ClickHandler {
-
-		@Override
-		public void onClick(ClickEvent event) {
-
-			slist = new SortedList();
-			addWidget(slist.getSortedList());
-		}
+	ListBox getListBox2(boolean dropdown){
+		lb2 = new ListBox();
+	    lb2.addStyleName("demo-ListBox");
+	    lb2.addItem("1990");
+	    lb2.addItem("1991");
+	    lb2.addItem("1992");
+	    lb2.addItem("1993");
+	    lb2.addItem("1994");
+	    lb2.addItem("1995");
+	    lb2.addItem("1996");
+	    lb2.addItem("1997");
+	    lb2.addItem("1998");
+	    lb2.addItem("1999");
+	    lb2.addItem("2000");
+	    lb2.addItem("2001");
+	    lb2.addItem("2002");
+	    lb2.addItem("2003");
+	    lb2.addItem("2004");
+	    lb2.addItem("2005");
+	    lb2.addItem("2006");
+	    lb2.addItem("2007");
+	    lb2.addItem("2008");
+	    lb2.addItem("2009");
+	    lb2.addItem("2010");
+	    lb2.addItem("2011");
+	    if(!dropdown)lb.setVisibleItemCount(3);
+	    return lb2;
 	}
-
+	
 	private class Btnh2ClickHandler implements ClickHandler {
 
 		@Override
@@ -107,11 +154,13 @@ public class MainGUI extends Composite {
 			Runnable onLoadCallback = new Runnable() {
 				public void run() {
 					
+					int index = lb2.getSelectedIndex();
 					
-					String sql = "select area_name, value from data where year='1992' and flagd='Official data' limit 10";
+					String sql = "select area_name, value from data where year='"+lb2.getItemText(index)+"' and flagd='Official data' order by value desc limit 8";
+
 					serviceImpl.getData(sql);
 					
-					vPanel.add(pie.getPieChart(data));
+					vPanel.add(pie.getPieChart(data,lb2.getItemText(index)));
 					
 				}
 			};
@@ -157,6 +206,7 @@ public class MainGUI extends Composite {
 	
 		// Create a CellTable.
 		CellTable<List<String>> table= new CellTable<List<String>>();
+		table.setVisibleRange(0, 200);
 
 		// Get the rows as List
 		int nrows = stringArray.length;
