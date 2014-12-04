@@ -67,16 +67,20 @@ public class MainGUI extends Composite {
 		this.serviceImpl = serviceImpl;
 		vPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 		hPanel.setSpacing(50);
+		this.vPanel.add(hPanel);
 		
-		
-
+		//dummyCode();
+		addGuiElements();
+	}
+	
+	
+	private void dummyCode(){
 		VerticalPanel vPanel1 = new VerticalPanel();
 		VerticalPanel vPanel2 = new VerticalPanel();
 		VerticalPanel vPanel3 = new VerticalPanel();
 		
 		HorizontalPanel hPanel1 = new HorizontalPanel();
 		HorizontalPanel hPanel2 = new HorizontalPanel();
-		HorizontalPanel hPanel3 = new HorizontalPanel();
 		
 		Label l1 = new Label("This option will show the whole Database Table");
 		vPanel1.add(l1);
@@ -97,25 +101,49 @@ public class MainGUI extends Composite {
 		
 		vPanel2.add(hPanel2);
 		
-		Label l3 = new Label("This option shows the Population from a Country between 1992 and 2011");
-	//	vPanel3.add(l3);
-	
 		this.hPanel.add(vPanel1);
 		this.hPanel.add(vPanel2);
 		this.hPanel.add(vPanel3);
 	
 		btnh2.addClickHandler(new Btnh2ClickHandler());
 		btn3.addClickHandler(new Btn3ClickHandler());
-		
-		this.vPanel.add(hPanel);
 	}
 	
 	
 	
-//	private void addGuiElements(){
-//		addChartTypeSelector();
-//	}
-//	
+	private void addGuiElements(){
+		addChartTypeSelector();
+	}
+	
+	private void addChartTypeSelector() {
+		
+		VerticalPanel vPanel = new VerticalPanel();
+		HorizontalPanel hPanel = new HorizontalPanel();
+		
+	    // Make some radio buttons, all in one group.
+		st = new RadioButton("chartType", "Sorted Table");
+		pc = new RadioButton("chartType", "Pie Chart");
+		map = new RadioButton("chartType", "Map");
+	
+		// Check sorted table by default.
+		st.setChecked(true);
+		
+		// Add them to the root panel.
+	    //FlowPanel panel = new FlowPanel();
+	    hPanel.add(st);
+	    hPanel.add(pc);
+	    hPanel.add(map);
+	    //RootPanel.get().add(panel);
+	    
+	    vPanel.add(hPanel);
+	    
+	    this.hPanel.add(vPanel);
+	    
+		String sql = "select distinct concat(domain_name, ' - ', domain_code) from data order by domain_name, domain_code";
+		//String sql = "select 1";
+		requestData(sql, "domain_filter");
+	  }
+	
 	//ListBox to define how many rows from the table will be shown
 	private void requestData(String sql, String key){
 		processMethod = key;
@@ -123,8 +151,6 @@ public class MainGUI extends Composite {
 	}
 	
 	private void addDomainFilter(String[][] data){
-		System.out.println("inside domain filter");
-		
 		domainFilter = new ListBox();
 		addListBox(data, domainFilter);
 		
@@ -175,8 +201,8 @@ public class MainGUI extends Composite {
 	
 	private void addListBox(String[][] data, ListBox listBox){
 		VerticalPanel vPanel = new VerticalPanel();
-		vPanel.setBorderWidth(1);
-		
+		HorizontalPanel hPanel = new HorizontalPanel();
+
 		listBox = new ListBox();
 		listBox.addStyleName("demo-ListBox");
 		for(int i = 1; i < data.length; ++i){
@@ -184,34 +210,12 @@ public class MainGUI extends Composite {
 		}
 		listBox.setVisibleItemCount(15);
 		
-		vPanel.add(listBox);
+		hPanel.add(listBox);
+		vPanel.add(hPanel);
 		
-		this.vPanel.add(vPanel);
+		this.hPanel.add(vPanel);
 		
 	}
-	
-	private void addChartTypeSelector() {
-	    // Make some radio buttons, all in one group.
-		st = new RadioButton("chartType", "Sorted Table");
-		pc = new RadioButton("chartType", "Pie Chart");
-		map = new RadioButton("chartType", "Map");
-	
-		// Check sorted table by default.
-		st.setChecked(true);
-		
-		// Add them to the root panel.
-		
-	    FlowPanel panel = new FlowPanel();
-	    panel.add(st);
-	    panel.add(pc);
-	    panel.add(map);
-	    //RootPanel.get().add(panel);
-	    
-	    vPanel.add(panel);
-	    
-		String sql = "select distinct concat(domain_name, ' - ', domain_code) from data order by domain_name, domain_code";
-		requestData(sql, "domain_filter");
-	  }
 	
 	private void addButton(){
 		//add button
