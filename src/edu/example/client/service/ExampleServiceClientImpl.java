@@ -42,14 +42,8 @@ public class ExampleServiceClientImpl implements ExampleServiceClientInt{
 	
 			if(result instanceof String[][]){
 				String[][] output=  (String[][]) result;
-				//maingui.displaySmartTable(output);
-				maingui.copy(output);
-			
-				
+				maingui.process(output);
 			}
 		}
-		
 	}
-
-
 }

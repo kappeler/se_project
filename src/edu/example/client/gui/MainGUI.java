@@ -14,11 +14,13 @@ import com.google.gwt.user.cellview.client.ColumnSortEvent.ListHandler;
 import com.google.gwt.user.cellview.client.TextHeader;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
@@ -42,6 +44,19 @@ public class MainGUI extends Composite {
 	private MyPieChart pie;
 	private ListBox lb;
 	private ListBox lb2;
+	private String processMethod = "";
+	
+	
+	private ListBox yearFilter;
+	private ListBox domainFilter;
+	private ListBox areaFilter;
+	private ListBox elementFilter;
+	private ListBox itemFilter;
+	private ListBox flagFilter;
+	
+	RadioButton st;
+	RadioButton pc;
+	RadioButton map;
 	
 
 
@@ -85,20 +100,159 @@ public class MainGUI extends Composite {
 		Label l3 = new Label("This option shows the Population from a Country between 1992 and 2011");
 	//	vPanel3.add(l3);
 	
-		
-	
 		this.hPanel.add(vPanel1);
 		this.hPanel.add(vPanel2);
 		this.hPanel.add(vPanel3);
-
-		
-
 	
 		btnh2.addClickHandler(new Btnh2ClickHandler());
 		btn3.addClickHandler(new Btn3ClickHandler());
 		
 		this.vPanel.add(hPanel);
 	}
+	
+	
+	
+//	private void addGuiElements(){
+//		addChartTypeSelector();
+//	}
+//	
+	//ListBox to define how many rows from the table will be shown
+	private void requestData(String sql, String key){
+		processMethod = key;
+		serviceImpl.getData(sql);
+	}
+	
+	private void addDomainFilter(String[][] data){
+		System.out.println("inside domain filter");
+		
+		domainFilter = new ListBox();
+		addListBox(data, domainFilter);
+		
+		//String sql = "select distinct concat(area_name, ' - ', area_code) from data order by area_name, area_code";
+		//requestData(sql, "area_filter");
+	}
+	
+	private void addAreaFilter(String[][] data){
+		areaFilter = new ListBox();
+		addListBox(data, areaFilter);
+		
+		String sql = "select distinct element_name, element_code from data order by element_name, element_code";
+		requestData(sql, "element_filter");
+	}
+	
+	private void addElementFilter(String[][] data){
+		elementFilter = new ListBox();
+		addListBox(data, elementFilter);
+		
+		String sql = "select distinct item_name, item_code from data order by item_name, item_code";
+		requestData(sql, "item_filter");
+	}
+	
+	private void addItemFilter(String[][] data){
+		itemFilter = new ListBox();
+		addListBox(data, itemFilter);
+		
+		String sql = "select distinct year from data order by year desc";
+		requestData(sql, "year_filter");
+	}
+	
+	private void addYearFilter(String[][] data){
+		yearFilter = new ListBox();
+		addListBox(data, yearFilter);
+		
+		String sql = "select distinct flagd, flag from data order by flagd, flag";
+		requestData(sql, "flag_filter");
+	}
+	
+	private void addFlagFilter(String[][] data){
+		elementFilter = new ListBox();
+		addListBox(data, flagFilter);
+		
+		//TODO value range
+		
+		addButton();
+	}
+	
+	private void addListBox(String[][] data, ListBox listBox){
+		VerticalPanel vPanel = new VerticalPanel();
+		vPanel.setBorderWidth(1);
+		
+		listBox = new ListBox();
+		listBox.addStyleName("demo-ListBox");
+		for(int i = 1; i < data.length; ++i){
+			listBox.addItem(data[i][0]);
+		}
+		listBox.setVisibleItemCount(15);
+		
+		vPanel.add(listBox);
+		
+		this.vPanel.add(vPanel);
+		
+	}
+	
+	private void addChartTypeSelector() {
+	    // Make some radio buttons, all in one group.
+		st = new RadioButton("chartType", "Sorted Table");
+		pc = new RadioButton("chartType", "Pie Chart");
+		map = new RadioButton("chartType", "Map");
+	
+		// Check sorted table by default.
+		st.setChecked(true);
+		
+		// Add them to the root panel.
+		
+	    FlowPanel panel = new FlowPanel();
+	    panel.add(st);
+	    panel.add(pc);
+	    panel.add(map);
+	    //RootPanel.get().add(panel);
+	    
+	    vPanel.add(panel);
+	    
+		String sql = "select distinct concat(domain_name, ' - ', domain_code) from data order by domain_name, domain_code";
+		requestData(sql, "domain_filter");
+	  }
+	
+	private void addButton(){
+		//add button
+		Button btnh2 = new Button("Display");
+		btnh2.addClickHandler(new Btnh2ClickHandler());
+		
+		this.vPanel.add(btnh2);
+		//hPanel2.add();
+	}
+	
+	public void process(String[][] input){
+		switch (processMethod) {
+			case "sorted_table":
+				displaySmartTable(input);
+				break;
+			case "pie_chart":
+				displayPieChart(input);
+				break;
+			case "domain_filter":
+				addDomainFilter(input);
+				break;
+			case "area_filter":
+				addAreaFilter(input);
+				break;		
+			case "element_filter":
+				addElementFilter(input);
+				break;	
+			case "item_filter":
+				addItemFilter(input);
+				break;	
+			case "year_filter":
+				addYearFilter(input);
+				break;
+			case "flag_filter":
+				addFlagFilter(input);
+				break;
+			default:
+				break;
+		}
+	}
+	
 	
 	//ListBox to define how many rows from the table will be shown
 	ListBox getListBox(boolean dropdown)
@@ -142,30 +296,30 @@ public class MainGUI extends Composite {
 	    return lb2;
 	}
 	
+	private void displayPieChart(final String[][] data){
+		pie = new MyPieChart();
+		
+		if (vPanel.getWidgetCount() > 1) {
+			vPanel.remove(1);
+		}
+		
+		Runnable onLoadCallback = new Runnable() {
+			public void run() {
+				int index = lb2.getSelectedIndex();
+				
+				vPanel.add(pie.getPieChart(data,lb2.getItemText(index)));
+			}
+		};
+		VisualizationUtils.loadVisualizationApi(onLoadCallback,PieChart.PACKAGE);
+	}
+	
 	private class Btnh2ClickHandler implements ClickHandler {
-
 		@Override
 		public void onClick(ClickEvent event) {
+			int index = lb2.getSelectedIndex();
 			
-			pie = new MyPieChart();
-			if (vPanel.getWidgetCount() > 1) {
-				vPanel.remove(1);
-			}
-			Runnable onLoadCallback = new Runnable() {
-				public void run() {
-					
-					int index = lb2.getSelectedIndex();
-					
-					String sql = "select area_name, value from data where year='"+lb2.getItemText(index)+"' and flagd='Official data' order by value desc limit 8";
-
-					serviceImpl.getData(sql);
-					
-					vPanel.add(pie.getPieChart(data,lb2.getItemText(index)));
-					
-				}
-			};
-			VisualizationUtils.loadVisualizationApi(onLoadCallback,
-					PieChart.PACKAGE);
+			String sql = "select area_name, value from data where year='"+lb2.getItemText(index)+"' and flagd='Official data' order by value desc limit 8";
+			requestData(sql, "pie_chart");
 		}
 	}
 	
@@ -178,26 +332,15 @@ public class MainGUI extends Composite {
 	}
 
 	private class Btn3ClickHandler implements ClickHandler {
-		
-
 		@Override
 		public void onClick(ClickEvent event) {
 			int index = lb.getSelectedIndex();
 			
-			//table= new CellTable<List<String>>();
-			
-			serviceImpl.getData("select *from data limit "+lb.getItemText(index));
-			displaySmartTable(data);
-			
-			
-			
+			String sql = "select * from data limit "+lb.getItemText(index);
+			requestData(sql, "sorted_table");
 		}
 	}
-	public void copy(String[][] input){
-		data= input; 
-		
-	}
-
+	
 	
 	//**********************************************************************************
 	//**                                  CELL TABLE								  **
