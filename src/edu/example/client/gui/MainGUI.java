@@ -139,8 +139,7 @@ public class MainGUI extends Composite {
 	    
 	    this.hPanel.add(vPanel);
 	    
-		String sql = "select distinct concat(domain_name, ' - ', domain_code) from data order by domain_name, domain_code";
-		//String sql = "select 1";
+		String sql = "select concat(name, ' - ', code) from domain order by name, code";
 		requestData(sql, "domain_filter");
 	  }
 	
@@ -154,15 +153,15 @@ public class MainGUI extends Composite {
 		domainFilter = new ListBox();
 		addListBox(data, domainFilter);
 		
-		//String sql = "select distinct concat(area_name, ' - ', area_code) from data order by area_name, area_code";
-		//requestData(sql, "area_filter");
+		String sql = "select concat(name, ' - ', code) from area order by name, code";
+		requestData(sql, "area_filter");
 	}
 	
 	private void addAreaFilter(String[][] data){
 		areaFilter = new ListBox();
 		addListBox(data, areaFilter);
 		
-		String sql = "select distinct element_name, element_code from data order by element_name, element_code";
+		String sql = "select name, code from element order by name, code";
 		requestData(sql, "element_filter");
 	}
 	
@@ -170,7 +169,7 @@ public class MainGUI extends Composite {
 		elementFilter = new ListBox();
 		addListBox(data, elementFilter);
 		
-		String sql = "select distinct item_name, item_code from data order by item_name, item_code";
+		String sql = "select name, code from item order by name, code";
 		requestData(sql, "item_filter");
 	}
 	
@@ -178,7 +177,7 @@ public class MainGUI extends Composite {
 		itemFilter = new ListBox();
 		addListBox(data, itemFilter);
 		
-		String sql = "select distinct year from data order by year desc";
+		String sql = "select year from year order by year desc";
 		requestData(sql, "year_filter");
 	}
 	
@@ -186,7 +185,7 @@ public class MainGUI extends Composite {
 		yearFilter = new ListBox();
 		addListBox(data, yearFilter);
 		
-		String sql = "select distinct flagd, flag from data order by flagd, flag";
+		String sql = "select concat(short, ' - ', description) from flag order by short, description";
 		requestData(sql, "flag_filter");
 	}
 	
