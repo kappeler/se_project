@@ -1,26 +1,16 @@
 package edu.example.client.gui;
 
-import java.util.List;
-
-import com.google.gwt.core.client.JsArray;
-import com.google.gwt.user.cellview.client.CellTable;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.visualization.client.AbstractDataTable;
 import com.google.gwt.visualization.client.AbstractDataTable.ColumnType;
 import com.google.gwt.visualization.client.DataTable;
-import com.google.gwt.visualization.client.Selection;
-import com.google.gwt.visualization.client.events.SelectHandler;
-import com.google.gwt.visualization.client.visualizations.corechart.PieChart;
 import com.google.gwt.visualization.client.visualizations.corechart.Options;
+import com.google.gwt.visualization.client.visualizations.corechart.PieChart;
 
 public class MyPieChart {
 
 	public PieChart getPieChart(String[][] table, String pop) {
-	
 		PieChart pie = new PieChart(createTable(table), createOptions(pop));
 
-				
-		
 		return pie;
 	}
 
@@ -52,12 +42,12 @@ public class MyPieChart {
 		return data;
 	}
 
-	private Options createOptions(String pop) {
+	private Options createOptions(String title) {
 		Options options = Options.create();
 		options.setWidth(800);
 		options.setHeight(480);
 		//options.set3D(true);
-		options.setTitle("Population in "+pop);
+		options.setTitle(title);
 		return options;
 	}
 
