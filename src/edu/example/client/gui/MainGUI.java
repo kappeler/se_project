@@ -64,7 +64,7 @@ public class MainGUI extends Composite {
 		
 		if(st.isChecked()){
 			//sorted Table
-			if(whereClause == null){
+			if(whereClause != null){
 				sql = "select * from data " + whereClause+ " limit 10";
 			}else{
 				sql = "select * from data limit 10";	
@@ -74,7 +74,7 @@ public class MainGUI extends Composite {
 			
 		}else if(pc.isChecked()){
 			//pie chart
-			if(whereClause == null){
+			if(whereClause != null){
 				sql = "select area_name, value from data " + whereClause + " order by value desc limit 8";
 			}else{
 				sql = "select area_name, value from data order by value desc limit 8";
