@@ -18,7 +18,6 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -33,8 +32,6 @@ public class MainGUI extends Composite {
 	private HorizontalPanel hPanel = new HorizontalPanel();
 	
 	private MyPieChart pie;
-	private ListBoxMulti lb;
-	private ListBoxMulti lb2;
 	private String processMethod = "";
 	
 	private ListBoxMulti yearFilter;
@@ -62,54 +59,31 @@ public class MainGUI extends Composite {
 	}
 	
 	private void loadVisualization(){
-		String sql2 = getParsedSql(); 
+		String whereClause = getParsedSql();
+		String sql;
+		
 		if(st.isChecked()){
 			//sorted Table
-			String sql = "select * from data limit 10";
+			if(whereClause == null){
+				sql = "select * from data " + whereClause+ " limit 10";
+			}else{
+				sql = "select * from data limit 10";	
+			}
+			
 			requestData(sql, "sorted_table");
 			
 		}else if(pc.isChecked()){
 			//pie chart
-			String sql = "select area_name, value from data where year='1994' and flagd='Official data' order by value desc limit 8";
+			if(whereClause == null){
+				sql = "select area_name, value from data " + whereClause + " order by value desc limit 8";
+			}else{
+				sql = "select area_name, value from data order by value desc limit 8";
+			}
+			
 			requestData(sql, "pie_chart");
 		}else{
 			//load map
 		}
-	}
-	
-	
-	private void dummyCode(){
-		VerticalPanel vPanel1 = new VerticalPanel();
-		VerticalPanel vPanel2 = new VerticalPanel();
-		VerticalPanel vPanel3 = new VerticalPanel();
-		
-		HorizontalPanel hPanel1 = new HorizontalPanel();
-		HorizontalPanel hPanel2 = new HorizontalPanel();
-		
-		Label l1 = new Label("This option will show the whole Database Table");
-		vPanel1.add(l1);
-
-		hPanel1.setBorderWidth(1);
-		hPanel1.add(getListBox(true));
-		Button btn3 = new Button("Show Table");
-		hPanel1.add(btn3);
-		
-		vPanel1.add(hPanel1);
-		
-		Label l2 = new Label("This option shows the Population from Countries in specific years  (only top 8)");
-		vPanel2.add(l2);
-		hPanel2.setBorderWidth(1);
-		hPanel2.add(getListBox2(true));
-		Button btnh2 = new Button("Show Pie");
-		hPanel2.add(btnh2);
-		
-		vPanel2.add(hPanel2);
-		
-		this.hPanel.add(vPanel1);
-		this.hPanel.add(vPanel2);
-		this.hPanel.add(vPanel3);
-	
-		btnh2.addClickHandler(new DisplayClickHandler());
 	}
 	
 	private void addGuiElements(){
@@ -124,9 +98,22 @@ public class MainGUI extends Composite {
 		st = new RadioButton("chartType", "Sorted Table");
 		pc = new RadioButton("chartType", "Pie Chart");
 		map = new RadioButton("chartType", "Map");
-	
+		
 		// Check sorted table by default.
 		st.setChecked(true);
+		
+		if(!Window.Location.getHash().isEmpty()){
+			String chart = getCategoryQueryString("chart").replace("chart=@", "");
+			
+			if(chart.equals("st")){
+				st.setChecked(true);
+			}else if(chart.equals("pc")){
+				pc.setChecked(true);
+			}else{
+				//Map
+				map.setChecked(true);
+			}
+		}
 		
 		// Add them to the root panel.
 	    //FlowPanel panel = new FlowPanel();
@@ -149,9 +136,37 @@ public class MainGUI extends Composite {
 		serviceImpl.getData(sql);
 	}
 	
+	private void markSelected(String categoryName, ListBoxMulti list){
+		String category = getCategoryQueryString(categoryName);
+
+		if(category != null){
+			String[] parts = category.split("@");
+			//Skip first part "domain="
+			for(int i = 1; i< parts.length; ++i){
+				list.setSelectListItem(parts[i]);
+			}
+		}
+	}
+	
+	private String getCategoryQueryString(String catagory){
+		String queryHash = Window.Location.getHash();
+		
+		if(!queryHash.contains(catagory)){
+			return null;
+		}
+		
+		String categryTail = queryHash.substring(queryHash.indexOf(catagory));
+		categryTail = categryTail.substring(0, categryTail.indexOf("&"));
+		
+		categryTail = categryTail.replace("+", " ");
+		return categryTail;
+	}
+	
 	private void addDomainFilter(String[][] data){
 		domainFilter = new ListBoxMulti(true);
 		addListBox(data, domainFilter, "Domain Filter");
+		
+		markSelected("domain", domainFilter);
 		
 		String sql = "select concat(name, ' - ', code) from area order by name, code";
 		requestData(sql, "area_filter");
@@ -161,7 +176,9 @@ public class MainGUI extends Composite {
 		areaFilter = new ListBoxMulti(true);
 		addListBox(data, areaFilter, "Area Filter");
 		
-		String sql = "select name, code from element order by name, code";
+		markSelected("area", areaFilter);
+		
+		String sql = "select concat(name, ' - ', code) from element order by name, code";
 		requestData(sql, "element_filter");
 	}
 	
@@ -169,13 +186,17 @@ public class MainGUI extends Composite {
 		elementFilter = new ListBoxMulti(true);
 		addListBox(data, elementFilter, "Element Filter");
 		
-		String sql = "select name, code from item order by name, code";
+		markSelected("element", elementFilter);
+		
+		String sql = "select concat(name, ' - ', code) from item order by name, code";
 		requestData(sql, "item_filter");
 	}
 	
 	private void addItemFilter(String[][] data){
 		itemFilter = new ListBoxMulti(true);
 		addListBox(data, itemFilter, "Item Filter");
+		
+		markSelected("item", itemFilter);
 		
 		String sql = "select year from year order by year desc";
 		requestData(sql, "year_filter");
@@ -185,6 +206,8 @@ public class MainGUI extends Composite {
 		yearFilter = new ListBoxMulti(true);
 		addListBox(data, yearFilter, "Year Filter");
 		
+		markSelected("year", yearFilter);
+		
 		String sql = "select concat(short, ' - ', description) from flag order by short, description";
 		requestData(sql, "flag_filter");
 	}
@@ -192,6 +215,8 @@ public class MainGUI extends Composite {
 	private void addFlagFilter(String[][] data){
 		flagFilter = new ListBoxMulti(true);
 		addListBox(data, flagFilter, "Flag Filter");
+		
+		markSelected("flag", flagFilter);
 		
 		addButton();
 	}
@@ -203,7 +228,7 @@ public class MainGUI extends Composite {
 		this.vPanel.add(btnh2);
 		
 		//load visualization if there are informations in the query string
-		if(!Window.Location.getQueryString().contains("#")){
+		if(!Window.Location.getHash().isEmpty()){
 			loadVisualization();
 		}
 	}
@@ -214,8 +239,6 @@ public class MainGUI extends Composite {
 
 		Label l1 = new Label(label);
 		vPanel.add(l1);
-		
-		//TODO mark according to query string
 		
 		listBox.addStyleName("demo-ListBox");
 		for(int i = 1; i < data.length; ++i){
@@ -261,49 +284,7 @@ public class MainGUI extends Composite {
 		}
 	}
 	
-	
 	//ListBox to define how many rows from the table will be shown
-	ListBox getListBox(boolean dropdown)
-	{
-	    lb = new ListBoxMulti(false);
-	    lb.addStyleName("demo-ListBox");
-	    lb.addItem("5");
-	    lb.addItem("10");
-	    lb.addItem("50");
-	    lb.addItem("100");
-	    lb.addItem("150");
-	    if(!dropdown)lb.setVisibleItemCount(3);
-	    return lb;
-	}
-	ListBox getListBox2(boolean dropdown){
-		lb2 = new ListBoxMulti(false);
-	    lb2.addStyleName("demo-ListBox");
-	    lb2.addItem("1990");
-	    lb2.addItem("1991");
-	    lb2.addItem("1992");
-	    lb2.addItem("1993");
-	    lb2.addItem("1994");
-	    lb2.addItem("1995");
-	    lb2.addItem("1996");
-	    lb2.addItem("1997");
-	    lb2.addItem("1998");
-	    lb2.addItem("1999");
-	    lb2.addItem("2000");
-	    lb2.addItem("2001");
-	    lb2.addItem("2002");
-	    lb2.addItem("2003");
-	    lb2.addItem("2004");
-	    lb2.addItem("2005");
-	    lb2.addItem("2006");
-	    lb2.addItem("2007");
-	    lb2.addItem("2008");
-	    lb2.addItem("2009");
-	    lb2.addItem("2010");
-	    lb2.addItem("2011");
-	    if(!dropdown)lb.setVisibleItemCount(3);
-	    return lb2;
-	}
-	
 	private void displayPieChart(final String[][] data){
 		pie = new MyPieChart();
 		
@@ -333,12 +314,12 @@ public class MainGUI extends Composite {
 		String queryString = "";
 		
 		if(st.isChecked()){
-			queryString  += "chart=st";
+			queryString  += "chart=@st&";
 		}else if (pc.isChecked()) {
-			queryString  += "chart=pc";
+			queryString  += "chart=@pc&";
 		}else{
 			//map
-			queryString  += "chart=map";
+			queryString  += "chart=@map&";
 		}
 		
 		queryString += getQueryStringPart("domain=", domainFilter);
@@ -355,21 +336,82 @@ public class MainGUI extends Composite {
 		}else{
 			oldQueryString += "#";
 		}
+		
 		Window.Location.replace(Window.Location.getPath() + oldQueryString + queryString);
 	}
 	
 	private String getParsedSql(){
-		//TODO parse a sql query based on the selected elements
+		String whereClause = "";
+		String temp;
 		
-		return "";
+		temp = getWhereClauseCategory("domain_code", domainFilter);
+		if(temp != null) whereClause += " and " +  temp;
+		
+		temp = getWhereClauseCategory("area_code", areaFilter);
+		if(temp != null) whereClause += " and " +  temp;
+		
+		temp = getWhereClauseCategory("element_code", elementFilter);
+		if(temp != null) whereClause += " and " +  temp;
+		
+		temp = getWhereClauseCategory("item_code", itemFilter);
+		if(temp != null) whereClause += " and " +  temp;
+		
+		temp = getWhereClauseCategory("year", yearFilter);
+		if(temp != null) whereClause += " and " +  temp;
+		
+		temp = getWhereClauseCategory("flag", flagFilter);
+		if(temp != null) whereClause += " and " +  temp;
+
+		
+		if(whereClause.length() > 0){
+			//remove first and add where
+			whereClause = " where " + whereClause.substring(4);
+		}
+		
+		return whereClause;
 	}
 	
-	private String getQueryStringPart(String category,ListBoxMulti listBox){
+	private String getWhereClauseCategory(String category, ListBoxMulti listBox){
+		String whereClauseCategory = ""; 
+		
+		ArrayList<Integer> selectedItems =  listBox.getSelectedItems();
+		
+		for(Integer i : selectedItems){
+			if(category.equals("year")){
+				whereClauseCategory += " or " + category + " like '" + listBox.getItemText(i) + "'";
+			}else if(category.equals("flag")){
+				int index = listBox.getItemText(i).indexOf("-");
+				if(index == 0){
+					index = 1;
+				}
+				String tempClause = listBox.getItemText(i).substring(0, index);
+				if(tempClause.length() ==1 ){
+					whereClauseCategory += " or " + category + " like ''";
+				}else{
+					whereClauseCategory += " or " + category + " like '" + listBox.getItemText(i).substring(0, listBox.getItemText(i).indexOf("-") - 1) + "'";
+				}
+				
+			}else{
+				whereClauseCategory += " or " + category + " like '" + listBox.getItemText(i).substring(listBox.getItemText(i).indexOf("-") + 2) + "'";
+			}
+		}
+		
+		if(whereClauseCategory.length() < 4){
+			return null;
+		}
+		
+		whereClauseCategory = "(" +  whereClauseCategory.substring(4) + ")";
+		return whereClauseCategory;
+	}
+	
+	private String getQueryStringPart(String category, ListBoxMulti listBox){
 		String queryStringPart = category;
-		ArrayList<Integer> selectedIndexes = domainFilter.getSelectedItems();
+		ArrayList<Integer> selectedIndexes = listBox.getSelectedItems();
 		for(Integer index : selectedIndexes){
 			queryStringPart += "@" + listBox.getItemText(index).replaceAll(" ", "+");
 		}
+		
+		queryStringPart += "&";
 		
 		return queryStringPart;
 	}
@@ -417,7 +459,6 @@ public class MainGUI extends Composite {
 		dataProvider.addDataDisplay(table);
 
 		addWidget(table);
-		
 	}
 
 	
